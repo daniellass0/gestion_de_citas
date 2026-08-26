@@ -83,3 +83,17 @@ La perdida de esta informacion es inaceptable, ya que implicaria:
 Acorde a nuestra arquitectura, **cada microservicio maneja su propia base de datos** (Base de datos para Usuarios, para Citas, para Historial Clinico, etc.). 
 
 Esto evita que la caida de una base de datos afecte a todo el sistema simultaneamente. La informacion entre los distintos servicios se coordina y relaciona mediante identificadores compartidos (como el `ID` del paciente) y la comunicacion se realiza de forma segura a traves de APIs, evitando consultas directas (queries cruzadas) entre las bases de datos de diferentes servicios.
+
+## usuarios del sistema
+ -paciente
+ -medico
+ -administrador
+
+## riesgos y fallas posibles 
+    -Servicio de pagos: no se podrian procesar cobros en linea; la cita quedaria en estado "pendiente de pago" en lugar de bloquear el agendamiento, permitiendo pagar luego en el consultorio.
+    -Base de datos: se perderia el acceso a citas, historiales y datos de usuarios; el
+    sistema no podria registrar ni consultar informacion nueva hasta restaurar el
+    servicio.
+    -Servidor principal: todo el sistema quedaria fuera de linea: ni pacientes ni
+    personal podrian agendar, consultar o cancelar citas, obligando a volver
+    temporalmente a metodos manuales.
