@@ -14,3 +14,28 @@
  4. notificaciones  
  5. historial clinico
  6. Pagos
+
+## Conexion entre servicios 
+
+- Que servicio necesita informacion de otro?
+Citas necesita datos de Usuarios para validar al paciente y al medico y de Autenticacion para confirmar que quien agenda esta autorizado.
+
+- Quien solicita datos?
+Citas es el servicio que mas solicita informacion a los demas servicios.
+
+- Quien responde? 
+Usuarios, Autenticacion y Pagos responden confirmando o negando la informacion solicitada.
+
+
+## Tipo de arquitectura 
+
+- Microservicios 
+
+- Cuantos usuarios tendra el sistema? 
+Un numero moderado: los pacientes del consultorio, pocos medicos y un equipo administrativo pequeno, con posibilidad de crecer si el consultorio abre nuevas sedes.
+
+- Necesita escalar? 
+No de forma masiva a corto plazo, pero el diseno debe permitirlo sin tener que reescribir el sistema completo.
+
+- Es un sistema pequeno o grande? 
+Actualmente es un sistema pequeno-mediano.
