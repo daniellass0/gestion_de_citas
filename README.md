@@ -12,48 +12,38 @@ Actualmente el consultorio agenda las citas de forma manual (llamadas telefónic
 4. Notificaciones
 5. Pagos
 
-## Arquitectura
+## Comunicación entre servicios
 
-El sistema está basado en **microservicios**, porque cada servicio (usuarios, autenticación, citas, notificaciones y pagos) tiene una responsabilidad distinta y puede desarrollarse, desplegarse y escalarse por separado.
+1. Qué servicio necesita información de otro
+Citas necesita datos de Usuarios para validar al paciente y al médico y de Autenticación para confirmar que quien agenda está autorizado.
 
-El servicio de **Citas** es el que más se comunica con los demás, ya que necesita validar al paciente, al médico, la sesión y el pago antes de confirmar una cita.
+2. Quién solicita datos
+Citas es el servicio que más solicita información a los demás servicios.
 
-El diagrama completo, la definición de cada servicio y la tabla de comunicación entre servicios están en [`docs/arquitectura/arquitectura.md`](docs/arquitectura/arquitectura.md).
+3. Quién responde
+Usuarios, Autenticación y Pagos responden confirmando o negando la información solicitada.
+
+## Arquitectura del sistema
+
+Para este proyecto se seleccionó una arquitectura basada en **microservicios**, porque cada servicio (usuarios, autenticación, citas, notificaciones y pagos) tiene una responsabilidad distinta y puede desarrollarse, desplegarse y escalarse por separado. El servicio de **Citas** actúa como orquestador principal, ya que es el que más solicita información a los demás servicios para validar y completar una cita.
+
+![Diagrama de arquitectura](docs/img/arquitectura.png)
 
 ## Bases de datos y gestión de la información
 
-* **Usuarios:** pacientes (nombre, documento, contacto), médicos (especialidad, horario) y administrativos.
-* **Citas:** fecha, hora y estado de la cita.
-* **Pagos:** registro de transacciones.
-
-Cada servicio maneja su propia base de datos, siguiendo el enfoque de microservicios.
+### Entidades principales
+El sistema maneja los siguientes datos fundamentales:
+* Usuarios: pacientes (nombre, documento, contacto), médicos (especialidad, horario) y administrativos.
+* Citas: agenda (fecha, hora) y estado de la cita.
+* Pagos: registro de transacciones.
 
 ## Usuarios del sistema
-
 - Paciente
 - Médico
 - Administrador
+- Administrador del sistema
 
-## Riesgos y posibles fallas
-
-- **Servicio de pagos:** no se podrían procesar cobros en línea; la cita quedaría en estado "pendiente de pago" en vez de bloquear el agendamiento.
-- **Base de datos:** se perdería el acceso a citas, historiales y datos de usuarios hasta restaurar el servicio.
-- **Servidor principal:** todo el sistema quedaría fuera de línea, obligando a volver temporalmente a métodos manuales.
-
-## Docker
-
-Actualmente el componente **Home** está contenerizado y funcionando. Los demás servicios están definidos en `docker-compose.yml`, pendientes de implementar su lógica.
-
-## Docker Compose
-
-Para levantar el proyecto:
-
-```bash
-docker compose up --build
-```
-
-## Estado actual
-
-- **Implementado:** vista Home, ejecutándose en un contenedor.
-- **Definido, pendiente de lógica:** Usuarios, Autenticación, Citas, Notificaciones, Pagos.
-- **Pendiente:** login real, base de datos funcional, pagos reales, notificaciones reales.
+## Riesgos y fallas posibles
+- Servicio de pagos: no se podrían procesar cobros en línea; la cita quedaría en estado "pendiente de pago" en lugar de bloquear el agendamiento, permitiendo pagar luego en el consultorio.
+- Base de datos: se perdería el acceso a citas, historiales y datos de usuarios; el sistema no podría registrar ni consultar información nueva hasta restaurar el servicio.
+- Servidor principal: todo el sistema quedaría fuera de línea: ni pacientes ni personal podrían agendar, consultar o cancelar citas, obligando a volver temporalmente a métodos manuales.
