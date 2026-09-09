@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  home:
+    build: ./home
+    ports:
+      - "8080:80"
+    container_name: citas_home
+
+  usuarios:
+    image: alpine
+    command: tail -f /dev/null
+    container_name: citas_usuarios
+
+  autenticacion:
+    image: alpine
+    command: tail -f /dev/null
+    container_name: citas_autenticacion
+
+  citas:
+    image: alpine
+    command: tail -f /dev/null
+    container_name: citas_citas
+
+  notificaciones:
+    image: alpine
+    command: tail -f /dev/null
+    container_name: citas_notificaciones
+
+  pagos:
+    image: alpine
+    command: tail -f /dev/null
+    container_name: citas_pagos
