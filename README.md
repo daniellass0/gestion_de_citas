@@ -1,51 +1,49 @@
 # gestion_de_citas
 
-# Arquitectura del sistema: Sistema de Gestion de citas medicas
-## Problema que resuelve 
+## Problema que resuelve
 
-Actualmente el consultorio agenda las citas de forma manual llamadas telefonicas o agenda fisica.
+Actualmente el consultorio agenda las citas de forma manual (llamadas telefónicas o agenda física), lo que genera cruces de horario, citas duplicadas, olvidos y errores al registrar información. Este sistema centraliza el agendamiento, la confirmación y el recordatorio de citas médicas en una sola plataforma.
 
-Es comun que se presenten cruces de horarios, citas duplicadas, olvidos de parte de los pacientes o incluso errores al registrar la informacion. Ademas, gran parte del tiempo del personal se destina a tareas repetitivas como confirmar citas, reorganizar horarios o responder consultas sobre disponibilidad.
+## Servicios del sistema
 
-Para solucionar estos inconvenientes, se propone un sistema de gestion de citas medicas que centralice toda la informacion en una unica plataforma.
-
-## Servicios del sistema 
-
-1. usuarios 
-2. autenticacion 
-3. citas 
-4. notificaciones
+1. Usuarios
+2. Autenticación
+3. Citas
+4. Notificaciones
 5. Pagos
 
-## Comunicacion entre servicios 
-1. Que servicio necesita informacion de otro
-Citas necesita datos de Usuarios para validar al paciente y al medico y de Autenticacion para confirmar que quien agenda esta autorizado.
+## Comunicación entre servicios
 
-2. Quien solicita datos
-Citas es el servicio que mas solicita informacion a los demas servicios.
+1. Qué servicio necesita información de otro
+Citas necesita datos de Usuarios para validar al paciente y al médico y de Autenticación para confirmar que quien agenda está autorizado.
 
-3. Quien responde
-Usuarios, Autenticacion y Pagos responden confirmando o negando la informacion solicitada.
+2. Quién solicita datos
+Citas es el servicio que más solicita información a los demás servicios.
 
-## Arquitectura del Sistema
+3. Quién responde
+Usuarios, Autenticación y Pagos responden confirmando o negando la información solicitada.
 
-Para este proyecto hemos seleccionado una arquitectura basada en Microservicios. 
+## Arquitectura del sistema
 
-## Bases de Datos y Gestion de la Informacion
+Para este proyecto se seleccionó una arquitectura basada en **microservicios**, porque cada servicio (usuarios, autenticación, citas, notificaciones y pagos) tiene una responsabilidad distinta y puede desarrollarse, desplegarse y escalarse por separado. El servicio de **Citas** actúa como orquestador principal, ya que es el que más solicita información a los demás servicios para validar y completar una cita.
 
-### Entidades Principales
+![Diagrama de arquitectura](docs/img/arquitectura.png)
+
+## Bases de datos y gestión de la información
+
+### Entidades principales
 El sistema maneja los siguientes datos fundamentales:
-* Usuarios: Pacientes (nombre, documento, contacto), medicos (especialidad, horario) y administrativos.
-* Citas: Agenda (fecha, hora) y estado de la cita.
-* Pagos: Registro de transacciones.
+* Usuarios: pacientes (nombre, documento, contacto), médicos (especialidad, horario) y administrativos.
+* Citas: agenda (fecha, hora) y estado de la cita.
+* Pagos: registro de transacciones.
 
-## usuarios del sistema
-- paciente
-- medico
-- administrador
-- administrador del sistema
+## Usuarios del sistema
+- Paciente
+- Médico
+- Administrador
+- Administrador del sistema
 
-## riesgos y fallas posibles 
-- Servicio de pagos: no se podrian procesar cobros en linea; la cita quedaria en estado "pendiente de pago" en lugar de bloquear el agendamiento, permitiendo pagar luego en el consultorio.
-- Base de datos: se perderia el acceso a citas, historiales y datos de usuarios; el sistema no podria registrar ni consultar informacion nueva hasta restaurar el servicio.
-- Servidor principal: todo el sistema quedaria fuera de linea: ni pacientes ni personal podrian agendar, consultar o cancelar citas, obligando a volver temporalmente a metodos manuales.
+## Riesgos y fallas posibles
+- Servicio de pagos: no se podrían procesar cobros en línea; la cita quedaría en estado "pendiente de pago" en lugar de bloquear el agendamiento, permitiendo pagar luego en el consultorio.
+- Base de datos: se perdería el acceso a citas, historiales y datos de usuarios; el sistema no podría registrar ni consultar información nueva hasta restaurar el servicio.
+- Servidor principal: todo el sistema quedaría fuera de línea: ni pacientes ni personal podrían agendar, consultar o cancelar citas, obligando a volver temporalmente a métodos manuales.
