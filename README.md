@@ -9,7 +9,7 @@ Automatizar y centralizar el proceso de agendamiento y gestión de citas médica
 ## Integrantes y Roles
 * Daniel Eduardo Lasso: Arquitectura y diagrama.
 * Luis Enrique Ruiz: Dockerfile y vista Home.
-* Javier Alejandro Guaca: Docker Compose y orquestación de servicios.
+* Javier Alejandro Guaca: Docker Compose y orquestación de servicios, investigacion de servicios e imagenes .
 * Francisco Javier Galindez: Documentación (README) y definición de APIs.
 
 ## Arquitectura del Sistema
