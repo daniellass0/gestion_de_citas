@@ -6,28 +6,40 @@ services:
     ports:
       - "8080:80"
     container_name: citas_home
+    env_file:
+      - .env
 
   usuarios:
     image: alpine
-    command: tail -f /dev/null
     container_name: citas_usuarios
 
   autenticacion:
     image: alpine
-    command: tail -f /dev/null
     container_name: citas_autenticacion
 
   citas:
     image: alpine
-    command: tail -f /dev/null
     container_name: citas_citas
 
   notificaciones:
     image: alpine
-    command: tail -f /dev/null
     container_name: citas_notificaciones
 
   pagos:
     image: alpine
-    command: tail -f /dev/null
     container_name: citas_pagos
+  
+  mysql:
+    image: mysql:8
+    environment:
+      - MYSQL_ROOT_PASSWORD: root
+      - MYSQL_DATABASE: gestiordecitas
+    ports:
+      - "3309:3309"
+    volumes:
+      -mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
+
+
