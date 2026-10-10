@@ -7,7 +7,6 @@ CREATE TABLE IF NOT EXISTS usuarios (
   rol          ENUM('paciente','medico','administrador') NOT NULL,
   especialidad VARCHAR(80),
   horario      VARCHAR(80),
-  creado_en    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 INSERT INTO usuarios (nombre, documento, email, telefono, rol, especialidad, horario) VALUES
