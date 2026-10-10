@@ -94,7 +94,11 @@ def crear():
     conexion.close()
     return jsonify({"mensaje": "cita creada", "id": nuevo_id}), 201
 
+#@app.route("/citas", methods=["PUT"])
+#def actualizar ():
 
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5001)
+
+
+
+app.run(host="0.0.0.0", port=5001)
