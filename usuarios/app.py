@@ -3,7 +3,6 @@ import requests, os
 from database import conectar
 
 app = Flask(__name__)
-citas_url = os.getenv("CITAS_URL")
 
 
 @app.route ("/usuarios")
@@ -77,7 +76,6 @@ def actualizar(id):
 
     return jsonify({"mensaje": "usuario actualizado"}), 200
 
-
 @app.route("/usuarios/<int:id>", methods=["DELETE"])
 def eliminar(id):
     conexion = conectar()
@@ -93,7 +91,5 @@ def eliminar(id):
     if usuario is None:
         return jsonify({"mensaje": "usuario no encontrada"}), 404
     return jsonify(usuario)
-
-
 
 app.run (host="0.0.0.0.", port=5000)
