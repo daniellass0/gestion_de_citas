@@ -8,3 +8,5 @@ CREATE TABLE IF NOT EXISTS pagos (
   creado_en   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   INDEX idx_cita (cita_id)
 );
+
+
