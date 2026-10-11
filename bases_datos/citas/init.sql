@@ -5,5 +5,10 @@ CREATE TABLE IF NOT EXISTS citas (
   hora        TIME NOT NULL,
   motivo      VARCHAR(255),
   estado      ENUM('pendiente_pago','confirmada','cancelada','completada') NOT NULL DEFAULT 'pendiente_pago',
+<<<<<<< HEAD
+  pago_id     INT NULL
+);
+=======
   pago_id     INT NULL,         
 );
+>>>>>>> main
