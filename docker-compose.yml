@@ -58,3 +58,7 @@ services:
     volumes:
       - citas_data:/var/lib/mysql
 
+volumes:
+  usuarios_data:
+  pagos_data:
+  citas_data:
