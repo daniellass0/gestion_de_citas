@@ -221,9 +221,9 @@ Ninguna configuración está escrita en el código. Los valores están en .env y
 
 | Imagen | Usada por | Por qué se eligió |
 | --- | --- | --- |
-| python:3.12-slim | usuarios, pagos, citas | Python 3.12 sobre Debian reducido: suficiente para Flask y mucho más liviana que python:3.12 |
-| nginx:alpine | home | Servidor web muy liviano para publicar la vista HTML/CSS |
-| mysql:8.4 | db_usuarios, db_pagos, db_citas | Versión LTS de MySQL 8; una instancia independiente por servicio |
+| python:3.12-slim https://hub.docker.com/_/python| usuarios, pagos, citas | Python 3.12 sobre Debian reducido: suficiente para Flask y mucho más liviana que python:3.12 |
+| nginx:alpine https://hub.docker.com/_/nginx| home | Servidor web muy liviano para publicar la vista HTML/CSS |
+| mysql:8.4 https://hub.docker.com/_/mysql | db_usuarios, db_pagos, db_citas | Versión LTS de MySQL 8; una instancia independiente por servicio |
 
 ### Imágenes propias
 
