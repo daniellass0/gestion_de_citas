@@ -1,45 +1,64 @@
-version: '3.8'
-
 services:
-  home:
-    build: ./home
+  usuarios:
+    build: ./usuarios
     ports:
-      - "8080:80"
-    container_name: citas_home
+      - "5000:5000"
     env_file:
       - .env
-
-  usuarios:
-    image: alpine
-    container_name: citas_usuarios
-
-  autenticacion:
-    image: alpine
-    container_name: citas_autenticacion
-
-  citas:
-    image: alpine
-    container_name: citas_citas
-
-  notificaciones:
-    image: alpine
-    container_name: citas_notificaciones
+    depends_on:
+      - db_usuarios
 
   pagos:
-    image: alpine
-    container_name: citas_pagos
-  
-  mysql:
+    build: ./pagos
+    ports:
+      - "5001:5001"
+    env_file:
+      - .env
+    depends_on:
+      - db_pagos
+
+  citas:
+    build: ./citas
+    ports:
+      - "5002:5002"
+    env_file:
+      - .env
+    depends_on:
+      - db_citas
+      - usuarios
+      - pagos
+
+  db_usuarios:
     image: mysql:8
     environment:
-      - MYSQL_ROOT_PASSWORD: root
-      - MYSQL_DATABASE: gestiordecitas
+      MYSQL_ROOT_PASSWORD: ${DB_USUARIOS_PASSWORD}
+      MYSQL_DATABASE: ${DB_USUARIOS_NAME}
     ports:
-      - "3309:3309"
+      - "3309:3306"
     volumes:
-      -mysql_data:/var/lib/mysql
+      - usuarios_data:/var/lib/mysql
+
+  db_pagos:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PAGOS_PASSWORD}
+      MYSQL_DATABASE: ${DB_PAGOS_NAME}
+    ports:
+      - "3310:3306"
+    volumes:
+      - pagos_data:/var/lib/mysql
+
+  db_citas:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_CITAS_PASSWORD}
+      MYSQL_DATABASE: ${DB_CITAS_NAME}
+    ports:
+      - "3311:3306"
+    volumes:
+      - citas_data:/var/lib/mysql
 
 volumes:
-  mysql_data:
-
-
+  usuarios_data:
+  pagos_data:
+  citas_data:
