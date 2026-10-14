@@ -58,29 +58,3 @@ services:
     volumes:
       - citas_data:/var/lib/mysql
 
-  citas:
-    build: ./citas
-    container_name: citas_citas
-    restart: always
-    ports:
-      - "5002:5000"
-    environment:
-      DB_HOST: db_citas
-      DB_USER: ${DB_CITAS_USER}
-      DB_PASSWORD: ${DB_CITAS_PASSWORD}
-      DB_NAME: ${DB_CITAS_NAME}
-      DB_PORT: 3306
-      USUARIOS_URL: ${USUARIOS_SERVICE_URL}
-      PAGOS_URL: ${PAGOS_SERVICE_URL}
-    depends_on:
-      - db_citas
-      - usuarios
-      - pagos
-    networks:
-      - red-citas
-
-# --- VOLUMENES Y REDES ---
-volumes:
-  usuarios_data:
-  pagos_data:
-  citas_data:
