@@ -1,10 +1,10 @@
 from flask import Flask, jsonify, request
-import requests
-import os
+import requests, os
 from database import conectar
 
 app = Flask(__name__)
 
+<<<<<<< HEAD
 USUARIOS_URL = os.getenv(
     "USUARIOS_URL", "http://usuarios:5000"
 ).rstrip("/")
@@ -23,8 +23,24 @@ def normalizar_cita(cita):
         cita["hora"] = str(cita["hora"])
 
     return cita
+=======
+usuarios_url = os.getenv("USUARIOS_URL", "http://usuarios:5000")
+pagos_url = os.getenv("PAGOS_URL", "http://pagos:5000")
+>>>>>>> origin/main
 
-@app.route("/citas", methods=["GET"])
+
+def consultar(url):
+    """Hace un GET a otro servicio. Devuelve el JSON o None si falla."""
+    try:
+        respuesta = requests.get(url, timeout=5)
+        if respuesta.status_code == 200:
+            return respuesta.json()
+        return None
+    except requests.RequestException:
+        return None
+
+
+@app.route("/citas")
 def listar_citas():
     conexion = conectar()
     cursor = conexion.cursor(dictionary=True)
@@ -43,16 +59,14 @@ def listar_citas():
     return jsonify(citas), 200
 
 
-@app.route("/citas/<int:id>", methods=["GET"])
+@app.route("/citas/<int:id>")
 def buscar(id):
     conexion = conectar()
     cursor = conexion.cursor(dictionary=True)
-
     sql = """
         SELECT * FROM citas
         WHERE id = %s
     """
-
     cursor.execute(sql, (id,))
     cita = normalizar_cita(cursor.fetchone())
 
@@ -178,11 +192,8 @@ def detalles(id):
     cita = normalizar_cita(cursor.fetchone())
     cursor.close()
     conexion.close()
-
     if cita is None:
-        return jsonify({
-            "mensaje": "Cita no encontrada"
-        }), 404
+        return jsonify({"mensaje": "cita no encontrada"}), 404
 
     try:
 
