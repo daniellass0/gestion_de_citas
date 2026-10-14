@@ -4,8 +4,29 @@ from database import conectar
 
 app = Flask(__name__)
 
+<<<<<<< HEAD
+USUARIOS_URL = os.getenv(
+    "USUARIOS_URL", "http://usuarios:5000"
+).rstrip("/")
+
+PAGOS_URL = os.getenv(
+    "PAGOS_URL", "http://pagos:5001"
+).rstrip("/")
+
+def normalizar_cita(cita):
+    if cita is None:
+        return None
+
+    cita = dict(cita)
+
+    if cita.get("hora") is not None:
+        cita["hora"] = str(cita["hora"])
+
+    return cita
+=======
 usuarios_url = os.getenv("USUARIOS_URL", "http://usuarios:5000")
 pagos_url = os.getenv("PAGOS_URL", "http://pagos:5000")
+>>>>>>> origin/main
 
 
 def consultar(url):
@@ -25,11 +46,17 @@ def listar_citas():
     cursor = conexion.cursor(dictionary=True)
     cursor.execute(
         "SELECT * FROM citas"
-    )
-    citas = cursor.fetchall()
+        )
+    citas = [
+    
+    normalizar_cita(cita)
+    for cita in cursor.fetchall()
+    
+    ]
     cursor.close()
     conexion.close()
-    return jsonify(citas)
+
+    return jsonify(citas), 200
 
 
 @app.route("/citas/<int:id>")
@@ -41,103 +68,172 @@ def buscar(id):
         WHERE id = %s
     """
     cursor.execute(sql, (id,))
-    cita = cursor.fetchone()
+    cita = normalizar_cita(cursor.fetchone())
+
     cursor.close()
     conexion.close()
-    if cita is None:
-        return jsonify({"mensaje": "cita no encontrada"}), 404
-    return jsonify(cita)
 
-
-@app.route("/citas/<int:id>/detalles")
-def detalles(id):
-    conexion = conectar()
-    cursor = conexion.cursor(dictionary=True)
-    sql = """
-        SELECT * FROM citas
-        WHERE id = %s
-    """
-    cursor.execute(sql, (id,))
-    cita = cursor.fetchone()
-    cursor.close()
-    conexion.close()
-    if cita is None:
-        return jsonify({"mensaje": "cita no encontrada"}), 404
-
-    # comunicacion con el servicio de usuarios
-    usuario = consultar(f"{usuarios_url}/usuarios/{cita['usuario_id']}")
-
-    # comunicacion con el servicio de pagos (la cita puede no tener pago aun)
-    pago = None
-    if cita["pago_id"] is not None:
-        pago = consultar(f"{pagos_url}/pagos/{cita['pago_id']}")
-
-    return jsonify({
-        "cita": cita,
-        "usuario": usuario,
-        "pago": pago
-    })
+    return jsonify(cita), 200
 
 
 @app.route("/citas", methods=["POST"])
 def crear():
-    nuevaCita = request.json
+    nueva_cita = request.get_json(silent=True)
+    campos = ("usuario_id", "pago_id", "fecha", "hora", "estado")
+
     conexion = conectar()
-    cursor = conexion.cursor(dictionary=True)
+    cursor = conexion.cursor()
+
     sql = """
         INSERT INTO citas
-        (usuario_id, fecha, hora, motivo, estado, pago_id)
-        VALUES (%s, %s, %s, %s, %s, %s)
+        (usuario_id, pago_id, fecha, hora, estado)
+        VALUES (%s, %s, %s, %s, %s)
     """
-    valores = (nuevaCita["usuario_id"], nuevaCita["fecha"], nuevaCita["hora"], nuevaCita["motivo"], nuevaCita["estado"], nuevaCita.get("pago_id"))
+
+    valores = (
+        nueva_cita["usuario_id"],
+        nueva_cita["pago_id"],
+        nueva_cita["fecha"],
+        nueva_cita["hora"],
+        nueva_cita["estado"]
+    )
 
     cursor.execute(sql, valores)
     conexion.commit()
     nuevo_id = cursor.lastrowid
     cursor.close()
     conexion.close()
-    return jsonify({"mensaje": "cita creada", "id": nuevo_id}), 201
+
+    return jsonify({
+        "mensaje": "Cita creada con éxito",
+        "id": nuevo_id
+    }), 201
 
 
 @app.route("/citas/<int:id>", methods=["PUT"])
 def actualizar(id):
-    citaActualizada = request.json
+    cita_actualizada = request.get_json(silent=True)
     conexion = conectar()
     cursor = conexion.cursor(dictionary=True)
+    cursor.execute(
+        "SELECT * FROM citas WHERE id = %s",
+        (id,)
+    )
+    cita = normalizar_cita(cursor.fetchone())
+
+    if cita is None:
+        cursor.close()
+        conexion.close()
+
+        return jsonify({
+            "mensaje": "Cita no encontrada"
+        }), 404
 
     sql = """
         UPDATE citas
-        SET usuario_id = %s, fecha = %s, hora = %s,
-            motivo = %s, estado = %s, pago_id = %s
+        SET usuario_id = %s,
+            pago_id = %s,
+            fecha = %s,
+            hora = %s,
+            estado = %s
         WHERE id = %s
     """
 
-    valores = (citaActualizada["usuario_id"], citaActualizada["fecha"], citaActualizada["hora"], citaActualizada["motivo"], citaActualizada["estado"], citaActualizada.get("pago_id"), id)
+    valores = (
+        cita_actualizada.get("usuario_id", cita["usuario_id"]),
+        cita_actualizada.get("pago_id", cita["pago_id"]),
+        cita_actualizada.get("fecha", cita["fecha"]),
+        cita_actualizada.get("hora", cita["hora"]),
+        cita_actualizada.get("estado", cita["estado"]),
+        id
+    )
 
     cursor.execute(sql, valores)
     conexion.commit()
     cursor.close()
     conexion.close()
-
-    return jsonify({"mensaje": "cita actualizada"}), 200
+    return jsonify({
+        "mensaje": "Cita actualizada con éxito"
+    }), 200
 
 
 @app.route("/citas/<int:id>", methods=["DELETE"])
 def eliminar(id):
     conexion = conectar()
-    cursor = conexion.cursor(dictionary=True)
-    sql = """
-        DELETE FROM citas
-        WHERE id = %s
-    """
-    cursor.execute(sql, (id,))
+    cursor = conexion.cursor()
+
+
+    cursor.execute(
+        "DELETE FROM citas WHERE id = %s",
+        (id,)
+    )
+
     conexion.commit()
-    eliminadas = cursor.rowcount
     cursor.close()
     conexion.close()
-    if eliminadas == 0:
+
+    return jsonify({
+        "mensaje": "Cita eliminada con éxito",
+        "id": id
+    }), 200
+
+
+@app.route("/citas/<int:id>/detalles", methods=["GET"])
+def detalles(id):
+
+
+    conexion = conectar()
+    cursor = conexion.cursor(dictionary=True)
+    cursor.execute(
+        "SELECT * FROM citas WHERE id = %s",
+        (id,)
+    )
+
+    cita = normalizar_cita(cursor.fetchone())
+    cursor.close()
+    conexion.close()
+    if cita is None:
         return jsonify({"mensaje": "cita no encontrada"}), 404
-    return jsonify({"mensaje": "cita eliminada"}), 200
+
+    try:
+
+        respuesta_usuario = requests.get(
+            f"{USUARIOS_URL}/usuarios/{cita['usuario_id']}",
+
+        )
+
+        respuesta_usuario.raise_for_status()
+        usuario = respuesta_usuario.json()
+        respuesta_pago = requests.get(
+            f"{PAGOS_URL}/pagos/{cita['pago_id']}",
+
+        )
+
+        respuesta_pago.raise_for_status()
+        pago = respuesta_pago.json()
+
+        resultado = {
+            "cita": {
+                "id": cita["id"],
+                "fecha": cita["fecha"],
+                "hora": cita["hora"],
+                "estado": cita["estado"]
+            },
+            "pago": {
+                "id_pago": pago["id"],
+                "estado_pago": pago["estado"]
+            },
+            "usuario": {
+                "id_usuario": usuario["id"],
+                "nombre_usuario": usuario["nombre"]
+            }
+        }
+        return jsonify(resultado), 200
+
+    except (requests.RequestException, ValueError, KeyError):
+        return jsonify({
+            "error": "No fue posible obtener la información de Usuarios o Pagos"
+        }), 502
 
 
-app.run(host="0.0.0.0", port=5001)
+app.run( host="0.0.0.0", port=int(os.getenv("PORT", 5002)))

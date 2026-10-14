@@ -1,109 +1,62 @@
 services:
-  # --- FRONEND / HOME ---
-  home:
-    build: ./home
-    container_name: citas_home
+  usuarios:
+    build: ./usuarios
     ports:
-      - "8080:80"
+      - "5000:5000"
     env_file:
       - .env
-    networks:
-      - red-citas
+    depends_on:
+      - db_usuarios
 
-  # --- SERVICIOS AUXILIARES ---
-  autenticacion:
-    image: alpine
-    container_name: citas_autenticacion
-    networks:
-      - red-citas
+  pagos:
+    build: ./pagos
+    ports:
+      - "5001:5001"
+    env_file:
+      - .env
+    depends_on:
+      - db_pagos
 
-  notificaciones:
-    image: alpine
-    container_name: citas_notificaciones
-    networks:
-      - red-citas
+  citas:
+    build: ./citas
+    ports:
+      - "5002:5002"
+    env_file:
+      - .env
+    depends_on:
+      - db_citas
+      - usuarios
+      - pagos
 
-  # --- MICROSERVICIO USUARIOS ---
   db_usuarios:
-    image: mysql:8.0
-    container_name: db_usuarios
-    restart: always
+    image: mysql:8
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_USUARIOS_PASSWORD}
       MYSQL_DATABASE: ${DB_USUARIOS_NAME}
     ports:
-      - "3307:3306"
+      - "3309:3306"
     volumes:
-      - ./bases_datos/usuarios/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - db_usuarios_data:/var/lib/mysql
-    networks:
-      - red-citas
+      - usuarios_data:/var/lib/mysql
 
-  usuarios:
-    build: ./usuarios
-    container_name: citas_usuarios
-    restart: always
-    ports:
-      - "5001:5000"
-    environment:
-      DB_HOST: db_usuarios
-      DB_USER: ${DB_USUARIOS_USER}
-      DB_PASSWORD: ${DB_USUARIOS_PASSWORD}
-      DB_NAME: ${DB_USUARIOS_NAME}
-      DB_PORT: 3306
-    depends_on:
-      - db_usuarios
-    networks:
-      - red-citas
-
-  # --- MICROSERVICIO PAGOS ---
   db_pagos:
-    image: mysql:8.0
-    container_name: db_pagos
-    restart: always
+    image: mysql:8
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PAGOS_PASSWORD}
       MYSQL_DATABASE: ${DB_PAGOS_NAME}
     ports:
-      - "3309:3306"
+      - "3310:3306"
     volumes:
-      - ./bases_datos/pagos/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - db_pagos_data:/var/lib/mysql
-    networks:
-      - red-citas
+      - pagos_data:/var/lib/mysql
 
-  pagos:
-    build: ./pagos
-    container_name: citas_pagos
-    restart: always
-    ports:
-      - "5003:5000"
-    environment:
-      DB_HOST: db_pagos
-      DB_USER: ${DB_PAGOS_USER}
-      DB_PASSWORD: ${DB_PAGOS_PASSWORD}
-      DB_NAME: ${DB_PAGOS_NAME}
-      DB_PORT: 3306
-    depends_on:
-      - db_pagos
-    networks:
-      - red-citas
-
-  # --- MICROSERVICIO CITAS (servicio principal: consulta a usuarios y pagos) ---
   db_citas:
-    image: mysql:8.0
-    container_name: db_citas
-    restart: always
+    image: mysql:8
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_CITAS_PASSWORD}
       MYSQL_DATABASE: ${DB_CITAS_NAME}
     ports:
-      - "3308:3306"
+      - "3311:3306"
     volumes:
-      - ./bases_datos/citas/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - db_citas_data:/var/lib/mysql
-    networks:
-      - red-citas
+      - citas_data:/var/lib/mysql
 
   citas:
     build: ./citas
@@ -128,10 +81,6 @@ services:
 
 # --- VOLUMENES Y REDES ---
 volumes:
-  db_usuarios_data:
-  db_citas_data:
-  db_pagos_data:
-
-networks:
-  red-citas:
-    driver: bridge
+  usuarios_data:
+  pagos_data:
+  citas_data:
