@@ -15,6 +15,8 @@ Automatizar y centralizar el proceso de agendamiento y gestión de citas médica
 ## Arquitectura del Sistema
 Para este proyecto se seleccionó una arquitectura basada en microservicios, porque cada servicio (usuarios, autenticación, citas, notificaciones y pagos) tiene una responsabilidad distinta y puede desarrollarse, desplegarse y escalarse por separado. El servicio de Citas actúa como orquestador principal, ya que es el que más solicita información a los demás servicios para validar y completar una cita.
 
+![Diagrama de arquitectura](docs/img/diagramaDeArquitectura.png)
+
 ![Diagrama de arquitectura](docs/img/arquitectura.png)
 
 ## Servicios implementados
@@ -260,6 +262,7 @@ Dependencias de Python (requirements.txt): flask, requests y mysql-connector-pyt
 git clone https://github.com/daniellass0/gestion_de_citas.git
 cd gestion_de_citas
 docker compose up --build
+docker compose down -v
 ```
 
 La primera vez tarda unos minutos mientras se descargan las imágenes y se inicializan las tres bases de datos.
