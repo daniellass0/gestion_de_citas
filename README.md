@@ -15,7 +15,7 @@ Automatizar y centralizar el proceso de agendamiento y gestión de citas médica
 ## Arquitectura del Sistema
 Para este proyecto se seleccionó una arquitectura basada en microservicios, porque cada servicio (usuarios, autenticación, citas, notificaciones y pagos) tiene una responsabilidad distinta y puede desarrollarse, desplegarse y escalarse por separado. El servicio de Citas actúa como orquestador principal, ya que es el que más solicita información a los demás servicios para validar y completar una cita.
 
-![Diagrama de arquitectura](docs/img/diagramaDeArquitectura.jpg)
+![Diagrama de arquitectura](docs/img/DiagramaSD.png)
 
 ![Diagrama de arquitectura](docs/img/arquitectura.png)
 
