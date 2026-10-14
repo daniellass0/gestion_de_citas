@@ -4,7 +4,6 @@ from database import conectar
 
 app = Flask(__name__)
 
-<<<<<<< HEAD
 USUARIOS_URL = os.getenv(
     "USUARIOS_URL", "http://usuarios:5000"
 ).rstrip("/")
@@ -23,10 +22,6 @@ def normalizar_cita(cita):
         cita["hora"] = str(cita["hora"])
 
     return cita
-=======
-usuarios_url = os.getenv("USUARIOS_URL", "http://usuarios:5000")
-pagos_url = os.getenv("PAGOS_URL", "http://pagos:5000")
->>>>>>> origin/main
 
 
 def consultar(url):
