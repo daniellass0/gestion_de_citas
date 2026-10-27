@@ -21,6 +21,9 @@ def normalizar_cita(cita):
     if cita.get("hora") is not None:
         cita["hora"] = str(cita["hora"])
 
+    if cita.get("fecha") is not None:
+        cita["fecha"] = str(cita["fecha"])
+
     return cita
 
 
@@ -39,14 +42,10 @@ def consultar(url):
 def listar_citas():
     conexion = conectar()
     cursor = conexion.cursor(dictionary=True)
-    cursor.execute(
-        "SELECT * FROM citas"
-        )
+    cursor.execute("SELECT * FROM citas")
     citas = [
-    
-    normalizar_cita(cita)
-    for cita in cursor.fetchall()
-    
+        normalizar_cita(cita)
+        for cita in cursor.fetchall()
     ]
     cursor.close()
     conexion.close()
@@ -68,13 +67,17 @@ def buscar(id):
     cursor.close()
     conexion.close()
 
+    if cita is None:
+        return jsonify({"mensaje": "Cita no encontrada"}), 404
+
     return jsonify(cita), 200
 
 
 @app.route("/citas", methods=["POST"])
 def crear():
     nueva_cita = request.get_json(silent=True)
-    campos = ("usuario_id", "pago_id", "fecha", "hora", "estado")
+    if not nueva_cita:
+        return jsonify({"mensaje": "Datos JSON no válidos o faltantes"}), 400
 
     conexion = conectar()
     cursor = conexion.cursor()
@@ -86,11 +89,11 @@ def crear():
     """
 
     valores = (
-        nueva_cita["usuario_id"],
-        nueva_cita["pago_id"],
-        nueva_cita["fecha"],
-        nueva_cita["hora"],
-        nueva_cita["estado"]
+        nueva_cita.get("usuario_id"),
+        nueva_cita.get("pago_id"),
+        nueva_cita.get("fecha"),
+        nueva_cita.get("hora"),
+        nueva_cita.get("estado")
     )
 
     cursor.execute(sql, valores)
@@ -107,7 +110,7 @@ def crear():
 
 @app.route("/citas/<int:id>", methods=["PUT"])
 def actualizar(id):
-    cita_actualizada = request.get_json(silent=True)
+    cita_actualizada = request.get_json(silent=True) or {}
     conexion = conectar()
     cursor = conexion.cursor(dictionary=True)
     cursor.execute(
@@ -156,7 +159,6 @@ def actualizar(id):
 def eliminar(id):
     conexion = conectar()
     cursor = conexion.cursor()
-
 
     cursor.execute(
         "DELETE FROM citas WHERE id = %s",
@@ -226,4 +228,5 @@ def detalles(id):
 
 
 
-app.run( host="0.0.0.0", port=int(os.getenv("PORT", 5002)))
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5002)))
