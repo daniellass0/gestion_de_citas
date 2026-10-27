@@ -176,59 +176,54 @@ def eliminar(id):
 @app.route("/citas/<int:id>/detalles", methods=["GET"])
 def detalles(id):
 
-
     conexion = conectar()
     cursor = conexion.cursor(dictionary=True)
+
     cursor.execute(
         "SELECT * FROM citas WHERE id = %s",
         (id,)
     )
 
     cita = normalizar_cita(cursor.fetchone())
+
     cursor.close()
     conexion.close()
+
     if cita is None:
-        return jsonify({"mensaje": "cita no encontrada"}), 404
+        return jsonify({
+            "mensaje": "Cita no encontrada"
+        }), 404
+
+    pago_id = cita["pago_id"]
+
+    url = f"{PAGOS_URL}/pagos/{pago_id}/detalles"
 
     try:
+        respuesta_pago = requests.get(url)
 
-        respuesta_usuario = requests.get(
-            f"{USUARIOS_URL}/usuarios/{cita['usuario_id']}",
+        if respuesta_pago.status_code != 200:
+            return jsonify({
+                "mensaje": "No fue posible obtener los detalles del pago"
+            }), respuesta_pago.status_code
 
-        )
+        datos_pago = respuesta_pago.json()
 
-        respuesta_usuario.raise_for_status()
-        usuario = respuesta_usuario.json()
-        respuesta_pago = requests.get(
-            f"{PAGOS_URL}/pagos/{cita['pago_id']}",
-
-        )
-
-        respuesta_pago.raise_for_status()
-        pago = respuesta_pago.json()
-
-        resultado = {
+        return jsonify({
             "cita": {
                 "id": cita["id"],
-                "fecha": cita["fecha"],
+                "fecha": str(cita["fecha"]),
                 "hora": cita["hora"],
                 "estado": cita["estado"]
             },
-            "pago": {
-                "id_pago": pago["id"],
-                "estado_pago": pago["estado"]
-            },
-            "usuario": {
-                "id_usuario": usuario["id"],
-                "nombre_usuario": usuario["nombre"]
-            }
-        }
-        return jsonify(resultado), 200
+            "pago": datos_pago["pago"],
+            "usuario": datos_pago["usuario"]
+        }), 200
 
-    except (requests.RequestException, ValueError, KeyError):
+    except requests.exceptions.ConnectionError:
         return jsonify({
-            "error": "No fue posible obtener la información de Usuarios o Pagos"
-        }), 502
+            "mensaje": "El servicio de pagos no está disponible"
+        }), 503
+
 
 
 app.run( host="0.0.0.0", port=int(os.getenv("PORT", 5002)))
