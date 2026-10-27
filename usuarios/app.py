@@ -125,5 +125,4 @@ def eliminar(id):
     return jsonify({"mensaje": "usuario eliminado", "usuario": usuario}), 200
 
 
-
 app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)))
