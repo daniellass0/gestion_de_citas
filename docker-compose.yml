@@ -1,4 +1,9 @@
 services:
+  home:
+    build: ./home
+    ports:
+      - "8080:80"
+
   usuarios:
     build: ./usuarios
     ports:
