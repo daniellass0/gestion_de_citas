@@ -146,14 +146,11 @@ def detalles(id):
 
     conexion = conectar()
     cursor = conexion.cursor(dictionary=True)
-
     cursor.execute(
         "SELECT * FROM pagos WHERE id = %s",
         (id,)
     )
-
     pago = cursor.fetchone()
-
     cursor.close()
     conexion.close()
 
