@@ -42,6 +42,7 @@ services:
       - "3309:3306"
     volumes:
       - usuarios_data:/var/lib/mysql
+      - ./bases_datos/usuarios:/docker-entrypoint-initdb.d
 
   db_pagos:
     image: mysql:8
@@ -52,6 +53,7 @@ services:
       - "3310:3306"
     volumes:
       - pagos_data:/var/lib/mysql
+      - ./bases_datos/pagos:/docker-entrypoint-initdb.d
 
   db_citas:
     image: mysql:8
@@ -62,8 +64,10 @@ services:
       - "3311:3306"
     volumes:
       - citas_data:/var/lib/mysql
+      - ./bases_datos/citas:/docker-entrypoint-initdb.d
 
 volumes:
   usuarios_data:
   pagos_data:
   citas_data:
+
