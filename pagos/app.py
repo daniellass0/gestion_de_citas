@@ -3,6 +3,7 @@ from database import conectar
 import requests
 import os
 import pybreaker
+import time
 
 app = Flask(__name__)
 
@@ -151,6 +152,8 @@ def eliminar(id):
 @app.route("/pagos/<int:id>/detalles", methods=["GET"])
 def detalles(id):
 
+
+    #time.sleep(5)
     tiempo_maximo = float(os.getenv("USUARIOS_TIMEOUT", "2"))
     conexion = conectar()
     cursor = conexion.cursor(dictionary=True)
@@ -241,4 +244,4 @@ def estado_circuito():
     }), 200
 
     
-app.run(host="0.0.0.0", port=5001)
+app.run(host="0.0.0.0", port=5002)

@@ -7,7 +7,7 @@ services:
   usuarios:
     build: ./usuarios
     ports:
-      - "5000:5000"
+      - "5001:5000"
     env_file:
       - .env
     depends_on:
@@ -16,7 +16,7 @@ services:
   pagos:
     build: ./pagos
     ports:
-      - "5001:5001"
+      - "5002:5000"
     env_file:
       - .env
     depends_on:
@@ -25,13 +25,26 @@ services:
   citas:
     build: ./citas
     ports:
-      - "5002:5002"
+      - "5003:5000"
     env_file:
       - .env
     depends_on:
       - db_citas
       - usuarios
       - pagos
+
+  gateway:
+    build: ./gateway
+    ports:
+      - "5000:5000"
+    environment:
+      CITAS_URL: ${CITAS_URL}
+      PAGOS_URL: ${PAGOS_URL}
+      USUARIOS_URL: ${USUARIOS_URL}
+    depends_on:
+      - citas
+      - pagos
+      - usuarios
 
   db_usuarios:
     image: mysql:8

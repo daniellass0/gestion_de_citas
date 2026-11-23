@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 import requests, os
 import pybreaker
 from database import conectar
+import time
 
 app = Flask(__name__)
 
@@ -158,6 +159,8 @@ def eliminar(id):
 @app.route("/citas/<int:id>/detalles", methods=["GET"])
 def detalles(id):
 
+    #time.sleep(5)
+
     tiempo_maximo = float(
         os.getenv("PAGOS_TIMEOUT", "2")
     )
@@ -240,4 +243,4 @@ def estado_circuito():
     }), 200
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5002)))
+    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5003)))
