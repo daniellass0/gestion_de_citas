@@ -22,7 +22,7 @@ Para este proyecto se seleccionó una arquitectura basada en microservicios, por
 ## Servicios implementados
 
 | Servicio | Responsabilidad | Información administrada | Comunicación con otros servicios |
-| --- | --- | --- | --- |
+| --- | --- | --- | ---- |
 | Usuarios | Gestionar pacientes, médicos y administradores | Nombre, documento, email, teléfono, rol, especialidad, horario | Responde a Citas (GET /usuarios/{id}) |
 | Pagos | Registrar las transacciones y su estado | Monto, estado del pago, fecha de creación | Responde a Citas (GET /pagos/{id}) |
 | Citas | Gestionar la agenda y consolidar la información de cada cita | Usuario, pago asociado, fecha, hora, estado de la cita | Consulta a Usuarios y a Pagos |
@@ -34,7 +34,7 @@ Todas las peticiones y respuestas usan JSON. En POST y PUT se debe enviar el enc
 ### Servicio Usuarios — http://localhost:5000
 
 | Método | Endpoint | Descripción | Entrada | Respuesta |
-| --- | --- | --- | --- | --- |
+| --- | --- | --- | --- | ---- |
 | GET | /usuarios | Consultar todos los usuarios | Ninguna | 200 · Lista de usuarios |
 | GET | /usuarios/{id} | Consultar un usuario | ID en la URL | 200 · Usuario · 404 si no existe |
 | POST | /usuarios | Crear usuario | JSON: nombre, documento, rol (obligatorios); email, telefono, especialidad, horario (opcionales) | 201 · {"mensaje": "usuario creado", "id": 6} · 400 si falta un campo obligatorio · 409 si el documento ya existe |
