@@ -299,9 +299,28 @@ Ninguna configuración está escrita en el código. Los valores están en `.env`
 
 | Imagen | Usada por | Motivo |
 | --- | --- | --- |
+<<<<<<< HEAD
 | python:3.12 | gateway, usuarios, pagos, citas | Python 3.12 para ejecutar Flask |
 | nginx:alpine | home | Servidor web liviano para publicar la vista HTML/CSS/JS |
 | mysql:8 | db_usuarios, db_pagos, db_citas | Una instancia independiente de MySQL por servicio |
+=======
+| python:3.12-slim https://hub.docker.com/_/python| usuarios, pagos, citas | Python 3.12 sobre Debian reducido: suficiente para Flask y mucho más liviana que python:3.12 |
+| nginx:alpine https://hub.docker.com/_/nginx| home | Servidor web muy liviano para publicar la vista HTML/CSS |
+| mysql:8.4 https://hub.docker.com/_/mysql | db_usuarios, db_pagos, db_citas | Versión LTS de MySQL 8; una instancia independiente por servicio |
+
+### Imágenes propias
+
+| Imagen | Dockerfile | Qué hace |
+| --- | --- | --- |
+| gestion_de_citas/home:1.0 | home/Dockerfile | Copia index.html y styles.css a nginx; expone el puerto 80 |
+| gestion_de_citas/usuarios:1.0 | usuarios/dockerfile | Instala requirements.txt y ejecuta app.py; puerto 5000 |
+| gestion_de_citas/pagos:1.0 | pagos/dockerfile | Igual; puerto 5001 |
+| estion_de_citas/citas:1.0 | citas/dockerfile | Igual; puerto 5002 |
+
+Los dockerfile de los servicios copian primero requirements.txt y después el código. Así, si solo cambia el código, Docker reutiliza la capa con las dependencias ya instaladas y la construcción es más rápida.
+
+Dependencias de Python (requirements.txt): flask, requests y mysql-connector-python.
+>>>>>>> origin/main
 
 ### Docker Compose
 

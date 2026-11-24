@@ -1,8 +1,13 @@
 services:
+  home:
+    build: ./home
+    ports:
+      - "8080:80"
+
   usuarios:
     build: ./usuarios
     ports:
-      - "5000:5000"
+      - "5001:5000"
     env_file:
       - .env
     depends_on:
@@ -11,7 +16,7 @@ services:
   pagos:
     build: ./pagos
     ports:
-      - "5001:5001"
+      - "5002:5000"
     env_file:
       - .env
     depends_on:
@@ -20,13 +25,26 @@ services:
   citas:
     build: ./citas
     ports:
-      - "5002:5002"
+      - "5003:5000"
     env_file:
       - .env
     depends_on:
       - db_citas
       - usuarios
       - pagos
+
+  gateway:
+    build: ./gateway
+    ports:
+      - "5000:5000"
+    environment:
+      CITAS_URL: ${CITAS_URL}
+      PAGOS_URL: ${PAGOS_URL}
+      USUARIOS_URL: ${USUARIOS_URL}
+    depends_on:
+      - citas
+      - pagos
+      - usuarios
 
   db_usuarios:
     image: mysql:8
@@ -37,6 +55,7 @@ services:
       - "3309:3306"
     volumes:
       - usuarios_data:/var/lib/mysql
+      - ./bases_datos/usuarios:/docker-entrypoint-initdb.d
 
   db_pagos:
     image: mysql:8
@@ -47,6 +66,7 @@ services:
       - "3310:3306"
     volumes:
       - pagos_data:/var/lib/mysql
+      - ./bases_datos/pagos:/docker-entrypoint-initdb.d
 
   db_citas:
     image: mysql:8
@@ -57,8 +77,10 @@ services:
       - "3311:3306"
     volumes:
       - citas_data:/var/lib/mysql
+      - ./bases_datos/citas:/docker-entrypoint-initdb.d
 
 volumes:
   usuarios_data:
   pagos_data:
   citas_data:
+

@@ -1,4 +1,3 @@
-
 CREATE TABLE IF NOT EXISTS usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -8,16 +7,17 @@ CREATE TABLE IF NOT EXISTS usuarios (
     rol VARCHAR(30) NOT NULL,
     especialidad VARCHAR(100) NULL,
     horario VARCHAR(100) NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+);
 
 
 
 CREATE TABLE IF NOT EXISTS pagos (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NOT NULL,
     monto DECIMAL(10,2) NOT NULL,
     estado VARCHAR(30) NOT NULL,
     creado DATETIME NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+);
 
 
 CREATE TABLE IF NOT EXISTS citas (
@@ -26,7 +26,5 @@ CREATE TABLE IF NOT EXISTS citas (
     pago_id INT NOT NULL,
     fecha DATE NOT NULL,
     hora TIME NOT NULL,
-    estado VARCHAR(50) NOT NULL,
-    INDEX idx_citas_usuario_id (usuario_id),
-    INDEX idx_citas_pago_id (pago_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    estado VARCHAR(50) NOT NULL
+);
