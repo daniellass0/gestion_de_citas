@@ -595,4 +595,10 @@ El paso a paso de cada prueba (CRUD, persistencia, comunicación, timeout, Circu
 
 ## Estado actual
 
-**Terminado:** microservicios Usuarios, Pagos y Citas con CRUD sobre MySQL; base de datos independiente y persistente por servicio; comunicación Citas → Pagos → Usuarios; timeout y Circuit Breaker en ambas dependencias; API Gateway para los tres servicios; vista Home conectada al Gateway; Docker Compose con redes, volúmenes y variables de entorno..
+**Terminado:** microservicios Usuarios, Pagos y Citas con CRUD sobre MySQL; base de datos independiente y persistente por servicio; comunicación Citas → Pagos → Usuarios; timeout y Circuit Breaker en ambas dependencias; API Gateway para los tres servicios; vista Home conectada al Gateway; Docker Compose con redes, volúmenes y variables de entorno.
+
+<<<<<<< Updated upstream
+**Pendiente:** formularios en la vista Home para crear, editar y eliminar registros (por ahora se hace con Thunder Client o Postman).
+=======
+**Pendiente:** formularios en la vista Home para crear, editar y eliminar registros (por ahora se hace con Thunder Client o Postman).
+>>>>>>> Stashed changes
